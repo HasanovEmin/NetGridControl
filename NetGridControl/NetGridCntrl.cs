@@ -6,8 +6,6 @@ using Aveva.Core.Presentation;
 using System;
 using Aveva.Core.Database.Filters;
 using Aveva.Core.PMLNet;
-using Aveva.ApplicationFramework.Presentation;
-using Aveva.Core.Presentation.AttributesControl;
 
 namespace NetGridControl
 {
