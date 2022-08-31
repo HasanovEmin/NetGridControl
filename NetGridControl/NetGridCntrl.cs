@@ -18,16 +18,27 @@ namespace NetGridControl
         DBElementCollection Specs;
         TypeFilter spcoFilter;
         string tableName = "Spec Viewer";
+        Label lbltotal;
+        public double RowsCount { get; set; }
 
         public NetGridCntrl()
         {
             InitializeComponent();
             spcoFilter = new TypeFilter(DbElementTypeInstance.SPCOMPONENT);
             items = new Hashtable();
+            lbltotal = new Label();
+            lbltotal.Dock = DockStyle.Bottom;
+            lbltotal.Location = new System.Drawing.Point(0, 0);
+            lbltotal.Name = "label1";
+            lbltotal.Size = new System.Drawing.Size(524, 16);
+            lbltotal.TabIndex = 1;
+            lbltotal.Text = "Total Items = 0";
+            panel1.Controls.Add(lbltotal);
 
             CollectElements();
             AddGridToForm();               
             InitializeGrid();
+
 
         }
 
@@ -63,6 +74,7 @@ namespace NetGridControl
         {
             this.netGridControl = new PR.NetGridControl();
             this.panel1.Controls.Add(this.netGridControl);
+
         }
 
         private void InitializeGrid()
@@ -71,7 +83,7 @@ namespace NetGridControl
             titles = new Hashtable();
             
             atts[1.0] = "Namn of PRMOWN";
-            atts[2.0] = "STYP";
+            atts[2.0] = "GTYPE OF CATR";
             atts[3.0] = "PPBO 1";
             atts[4.0] = "PPBO 2";
             atts[5.0] = "PPBO 3";
@@ -100,19 +112,22 @@ namespace NetGridControl
             }
             
             this.netGridControl.AfterRowFilterChanged += new PMLNetDelegate.PMLNetEventHandler(FilterChanged);
-            
+            this.netGridControl.setLabelVisibility(false);
+            RowsCount = this.netGridControl.getRows().Count;
+            lbltotal.Text = $"Total Items = {RowsCount}";
         }
 
         private void FilterChanged(ArrayList args)
         {
-            //Aveva.Core.Utilities.CommandLine.Command.CreateCommand($@"$p changed").RunInPdms();
-            //this.netGridControl.AutoFitColumns();
-            //double total = this.netGridControl.getNumberRows();
-            //Aveva.Core.Utilities.CommandLine.Command.CreateCommand($@"$p total = {total}").RunInPdms();
-            //double filteredIn = this.netGridControl.getFilteredInRows().Count;
-            //double filteredOut = this.netGridControl.getFilteredOutRows().Count;
-            //Aveva.Core.Utilities.CommandLine.Command.CreateCommand($@"$p filteredIn = {filteredIn}").RunInPdms();
-            //Aveva.Core.Utilities.CommandLine.Command.CreateCommand($@"$p filteredOut = {filteredOut}").RunInPdms();
+            double filteredIn = this.netGridControl.getFilteredInRows().Count;
+            if (filteredIn > 0)
+            {
+                lbltotal.Text = $"Filtered Items = {filteredIn}, Total Items = {RowsCount}";
+            }
+            else
+            {
+                lbltotal.Text = $"Total Items = {RowsCount}";
+            }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
